@@ -1049,3 +1049,38 @@ foo and_eq bar();
       (call_expression
         (identifier)
         (argument_list)))))
+
+
+
+
+================================================
+Operator call
+=================================================
+
+{
+  a.f(operator[]('k'));
+  operator[]('k') = BK;
+}
+
+
+------------------------------------------------
+
+(translation_unit
+  (compound_statement
+    (expression_statement
+      (call_expression
+        (field_expression
+          (identifier)
+          (field_identifier))
+        (argument_list
+          (call_expression
+            (operator_name)
+            (argument_list
+              (char_literal))))))
+    (expression_statement
+      (assignment_expression
+        (call_expression
+          (operator_name)
+          (argument_list
+            (char_literal)))
+        (identifier)))))

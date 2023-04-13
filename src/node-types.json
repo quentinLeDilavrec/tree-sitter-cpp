@@ -140,6 +140,10 @@
         "named": true
       },
       {
+        "type": "inline_asm_expression",
+        "named": true
+      },
+      {
         "type": "lambda_expression",
         "named": true
       },
@@ -1151,6 +1155,10 @@
             "named": true
           },
           {
+            "type": "operator_name",
+            "named": true
+          },
+          {
             "type": "primitive_type",
             "named": true
           }
@@ -1544,6 +1552,10 @@
         },
         {
           "type": "alias_declaration",
+          "named": true
+        },
+        {
+          "type": "call_expression",
           "named": true
         },
         {
@@ -2023,6 +2035,10 @@
         },
         {
           "type": "alias_declaration",
+          "named": true
+        },
+        {
+          "type": "call_expression",
           "named": true
         },
         {
@@ -3328,6 +3344,40 @@
     }
   },
   {
+    "type": "inline_asm_expression",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "inline_asm_operand",
+          "named": true
+        },
+        {
+          "type": "string_literal",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "inline_asm_operand",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "_expression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "labeled_statement",
     "named": true,
     "fields": {
@@ -4263,6 +4313,10 @@
           "named": true
         },
         {
+          "type": "call_expression",
+          "named": true
+        },
+        {
           "type": "concept_definition",
           "named": true
         },
@@ -4363,6 +4417,10 @@
         },
         {
           "type": "alias_declaration",
+          "named": true
+        },
+        {
+          "type": "call_expression",
           "named": true
         },
         {
@@ -4558,6 +4616,10 @@
           "named": true
         },
         {
+          "type": "call_expression",
+          "named": true
+        },
+        {
           "type": "concept_definition",
           "named": true
         },
@@ -4683,6 +4745,10 @@
         },
         {
           "type": "alias_declaration",
+          "named": true
+        },
+        {
+          "type": "call_expression",
           "named": true
         },
         {
@@ -5658,6 +5724,10 @@
           "named": true
         },
         {
+          "type": "call_expression",
+          "named": true
+        },
+        {
           "type": "concept_definition",
           "named": true
         },
@@ -6511,6 +6581,10 @@
   },
   {
     "type": "and_eq",
+    "named": false
+  },
+  {
+    "type": "asm",
     "named": false
   },
   {

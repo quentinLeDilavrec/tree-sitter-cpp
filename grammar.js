@@ -1,4 +1,5 @@
-const C = require("tree-sitter-c/grammar")
+// const C = require("tree-sitter-c/grammar")
+const C = require("./grammar-c.js")
 
 const PREC = Object.assign(C.PREC, {
   LAMBDA: 18,
@@ -844,7 +845,10 @@ module.exports = grammar(C, {
     call_expression: ($, original) => choice(original, seq(
       field('function', $.primitive_type),
       field('arguments', $.argument_list)
-    )),
+    ), prec.left(PREC.CALL, seq(
+      field('function', $.operator_name),
+      field('arguments', $.argument_list)
+    ))),
 
     co_await_expression: $ => prec.left(PREC.UNARY, seq(
       field('operator', 'co_await'),

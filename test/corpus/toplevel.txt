@@ -1,0 +1,53 @@
+================================================
+toplevel prepro calls
+================================================
+
+enum Color {
+};
+    
+ENABLE_OPERATORS_ON(PieceType)
+ENABLE_OPERATORS_ON(Piece)
+ENABLE_OPERATORS_ON(Color)
+
+/// Important: If the material values are changed, one must also
+
+const Value PawnValueMidgame   = Value(0x0C6);
+const Value PawnValueEndgame   = Value(0x102);
+
+---
+
+(translation_unit
+  (enum_specifier
+    (type_identifier)
+    (enumerator_list))
+  (call_expression
+    (identifier)
+    (argument_list
+      (identifier)))
+  (call_expression
+    (identifier)
+    (argument_list
+      (identifier)))
+  (call_expression
+    (identifier)
+    (argument_list
+      (identifier)))
+  (comment)
+  (declaration
+    (type_qualifier)
+    (type_identifier)
+    (init_declarator
+      (identifier)
+      (call_expression
+        (identifier)
+        (argument_list
+          (number_literal)))))
+  (declaration
+    (type_qualifier)
+    (type_identifier)
+    (init_declarator
+      (identifier)
+      (call_expression
+        (identifier)
+        (argument_list
+          (number_literal))))))
