@@ -1360,6 +1360,10 @@
         "required": true,
         "types": [
           {
+            "type": "sized_type_specifier",
+            "named": true
+          },
+          {
             "type": "type_descriptor",
             "named": true
           }

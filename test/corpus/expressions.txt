@@ -1653,9 +1653,8 @@ void f() {
           (binary_expression
             (parenthesized_expression
               (binary_expression
-                (call_expression
-                  (identifier)
-                  (argument_list
-                    (identifier)))
+                (cast_expression
+                  (sized_type_specifier)
+                  (identifier))
                 (identifier)))
             (identifier)))))))

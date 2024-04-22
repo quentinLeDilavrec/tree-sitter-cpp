@@ -89,6 +89,7 @@ module.exports = grammar(C, {
     [$.sized_type_specifier, $._expression_not_binary],
     [$.concatenated_string, $._expression_not_binary],
     [$._expression, $._top_level_expression_statement],
+    [$._type_specifier, $.cast_expression],
   ],
 
   inline: ($, original) => original.concat([
@@ -174,6 +175,16 @@ module.exports = grammar(C, {
       'mutable',
       'constinit',
       'consteval',
+    ),
+
+    cast_expression: ($, original) => choice(
+      original,
+      seq(
+        field('type', $.sized_type_specifier),
+        '(',
+        field('value', $._expression),
+        ')',
+      )
     ),
 
     type_descriptor: (_, original) => prec.right(original),
