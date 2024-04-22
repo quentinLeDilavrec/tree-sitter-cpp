@@ -1,0 +1,136 @@
+================================================================================
+toppreprocalls
+================================================================================
+
+
+#ifndef TYPES_H_INCLUDED
+#define TYPES_H_INCLUDED
+
+#define ENABLE_FULL_OPERATORS_ON(T)                             \
+inline T& operator/=(T& d, int i) { return d = T(int(d) / i); }
+
+ENABLE_FULL_OPERATORS_ON(Value)
+ENABLE_FULL_OPERATORS_ON(PieceType)
+
+#endif // #ifndef TYPES_H_INCLUDED
+
+--------------------------------------------------------------------------------
+
+(translation_unit
+  (preproc_ifdef
+    (identifier)
+    (preproc_def
+      (identifier))
+    (preproc_function_def
+      (identifier)
+      (preproc_params
+        (identifier))
+      (preproc_arg))
+    (expression_statement
+      (call_expression
+        (identifier)
+        (argument_list
+          (identifier))))
+    (expression_statement
+      (call_expression
+        (identifier)
+        (argument_list
+          (identifier))))))(comment)
+
+
+================================================================================
+preproccallafterstruct
+================================================================================
+
+struct TBEntry {
+char *data;
+} 
+#ifndef _WIN32
+__attribute__((__may_alias__))
+#endif
+;
+
+--------------------------------------------------------------------------------
+
+(translation_unit
+  (struct_specifier
+    (type_identifier)
+    (field_declaration_list
+      (field_declaration
+        (primitive_type)
+        (pointer_declarator
+          (field_identifier))))
+    (preproc_ifdef
+      (identifier)
+      (attribute_specifier
+        (argument_list
+          (identifier))))))
+
+
+================================================================================
+preproccallafterstruct2
+================================================================================
+
+#ifndef TBCORE_H
+#define TBCORE_H
+
+struct PairsData {
+char *indextable;
+ushort *sizetable;
+base_t base[1]; // C++ complains about base[]...
+};
+
+struct TBEntry {
+char *data;
+ubyte symmetric;
+ubyte has_pawns;
+}
+#ifndef _WIN32
+__attribute__((__may_alias__))
+#endif
+;
+
+#endif
+
+--------------------------------------------------------------------------------
+
+(translation_unit
+  (preproc_ifdef
+    (identifier)
+    (preproc_def
+      (identifier))
+    (struct_specifier
+      (type_identifier)
+      (field_declaration_list
+        (field_declaration
+          (primitive_type)
+          (pointer_declarator
+            (field_identifier)))
+        (field_declaration
+          (type_identifier)
+          (pointer_declarator
+            (field_identifier)))
+        (field_declaration
+          (type_identifier)
+          (array_declarator
+            (field_identifier)
+            (number_literal)))
+        (comment)))
+    (struct_specifier
+      (type_identifier)
+      (field_declaration_list
+        (field_declaration
+          (primitive_type)
+          (pointer_declarator
+            (field_identifier)))
+        (field_declaration
+          (type_identifier)
+          (field_identifier))
+        (field_declaration
+          (type_identifier)
+          (field_identifier)))
+      (preproc_ifdef
+        (identifier)
+        (attribute_specifier
+          (argument_list
+            (identifier)))))))

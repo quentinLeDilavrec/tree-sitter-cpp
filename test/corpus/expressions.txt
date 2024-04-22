@@ -1556,3 +1556,106 @@ template <typename... Args> void negateValues(Args... args) {
                     (identifier)))
                 (string_literal
                   (string_content))))))))))
+
+================================================================================
+lessthan
+================================================================================
+
+void f() {
+  x.a < y;
+}
+
+--------------------------------------------------------------------------------
+
+(translation_unit
+  (function_definition
+    (primitive_type)
+    (function_declarator
+      (identifier)
+      (parameter_list))
+    (compound_statement
+      (expression_statement
+        (binary_expression
+          (field_expression
+            (identifier)
+            (field_identifier))
+          (identifier))))))
+
+================================================================================
+unknown
+================================================================================
+
+namespace {
+  unsigned f() {
+    Is64Bit ? 58 : ((unsigned(b) ^ unsigned(b >> 32)) * DeBruijn32) >> 26;
+  }
+  unsigned g() {}
+}
+
+--------------------------------------------------------------------------------
+
+(translation_unit
+  (namespace_definition
+    (declaration_list
+      (function_definition
+        (sized_type_specifier)
+        (function_declarator
+          (identifier)
+          (parameter_list))
+            (compound_statement
+              (expression_statement
+                (conditional_expression
+                  (identifier)
+                  (number_literal)
+                  (binary_expression
+                    (parenthesized_expression
+                      (binary_expression
+                        (parenthesized_expression
+                          (binary_expression
+                            (call_expression
+                              (identifier)
+                              (argument_list
+                                (identifier)))
+                            (call_expression
+                              (identifier)
+                              (argument_list
+                                (binary_expression
+                                  (identifier)
+                                  (number_literal))))))
+                        (identifier)))
+                    (number_literal))))))
+          (function_definition
+            (sized_type_specifier)
+            (function_declarator
+              (identifier)
+              (parameter_list))
+            (compound_statement)))))
+
+================================================================================
+unknown2
+================================================================================
+
+void f() {
+  ((unsigned(b) ^ b) * DeBruijn32);
+}
+
+--------------------------------------------------------------------------------
+
+(translation_unit
+  (function_definition
+    (primitive_type)
+    (function_declarator
+      (identifier)
+      (parameter_list))
+    (compound_statement
+      (expression_statement
+        (parenthesized_expression
+          (binary_expression
+            (parenthesized_expression
+              (binary_expression
+                (call_expression
+                  (identifier)
+                  (argument_list
+                    (identifier)))
+                (identifier)))
+            (identifier)))))))

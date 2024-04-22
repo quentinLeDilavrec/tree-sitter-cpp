@@ -9,7 +9,8 @@
 /// <reference types="tree-sitter-cli/dsl" />
 // @ts-check
 
-const C = require('tree-sitter-c/grammar');
+// const C = require('tree-sitter-c/grammar');
+const C = require('./grammar-c.js');
 
 const PREC = Object.assign(C.PREC, {
   LAMBDA: 18,
@@ -84,6 +85,10 @@ module.exports = grammar(C, {
     [$.initializer_pair, $.comma_expression],
     [$.expression_statement, $._for_statement_body],
     [$.init_statement, $._for_statement_body],
+    [$.field_expression, $.template_method2],
+    [$.sized_type_specifier, $._expression_not_binary],
+    [$.concatenated_string, $._expression_not_binary],
+    [$._expression, $._top_level_expression_statement],
   ],
 
   inline: ($, original) => original.concat([
@@ -192,7 +197,11 @@ module.exports = grammar(C, {
           field('body', $.field_declaration_list),
         ),
       ),
-      optional($.attribute_specifier),
+      optional(choice(
+        $.attribute_specifier,
+        alias($.preproc_if_attribute_specifier, $.preproc_if),
+        alias($.preproc_ifdef_attribute_specifier, $.preproc_ifdef),
+      )),
     )),
 
     class_specifier: $ => seq(
@@ -293,7 +302,11 @@ module.exports = grammar(C, {
         ),
         field('body', $.enumerator_list),
       ),
-      optional($.attribute_specifier),
+      optional(choice(
+        $.attribute_specifier,
+        alias($.preproc_if_attribute_specifier, $.preproc_if),
+        alias($.preproc_ifdef_attribute_specifier, $.preproc_ifdef),
+      )),
     )),
 
     _enum_base_clause: $ => prec.left(seq(
@@ -485,7 +498,11 @@ module.exports = grammar(C, {
           seq('=', field('default_value', choice($._expression, $.initializer_list))),
         )),
       )),
-      optional($.attribute_specifier),
+      optional(choice(
+        $.attribute_specifier,
+        alias($.preproc_if_attribute_specifier, $.preproc_if),
+        alias($.preproc_ifdef_attribute_specifier, $.preproc_ifdef),
+      )),
       ';',
     ),
 
@@ -692,6 +709,15 @@ module.exports = grammar(C, {
     ),
 
     template_method: $ => seq(
+      field('name', choice($._field_identifier, $.operator_name)),
+      field('arguments', $.template_argument_list),
+    ),
+
+    template_method2: $ => seq(
+      prec(PREC.FIELD, seq(
+        field('argument', $._expression),
+        field('operator', choice('.', '.*', '->')),
+      )),
       field('name', choice($._field_identifier, $.operator_name)),
       field('arguments', $.template_argument_list),
     ),
@@ -937,6 +963,7 @@ module.exports = grammar(C, {
       $.raw_string_literal,
       $.user_defined_literal,
       $.fold_expression,
+      alias($.template_method2, $.template_method),
     ),
 
     raw_string_literal: $ => seq(
@@ -1004,19 +1031,19 @@ module.exports = grammar(C, {
       $._expression,
     ),
 
-    field_expression: $ => prec.right(seq(
+    field_expression: $ => seq(
       prec(PREC.FIELD, seq(
         field('argument', $._expression),
         field('operator', choice('.', '.*', '->')),
       )),
       field('field', choice(
         $._field_identifier,
-        alias($.qualified_field_identifier, $.qualified_identifier),
+        // alias($.qualified_field_identifier, $.qualified_identifier),
         $.destructor_name,
-        $.template_method,
-        alias($.dependent_field_identifier, $.dependent_name),
+        // $.template_method,
+        // alias($.dependent_field_identifier, $.dependent_name),
       )),
-    )),
+    ),
 
     type_requirement: $ => seq('typename', $._class_name),
 
@@ -1221,8 +1248,18 @@ module.exports = grammar(C, {
       '::',
     )),
 
+    _scope_resolution2: $ => prec(1, seq(
+      field('scope', optional(choice(
+        $._namespace_identifier,
+        // $.template_type,
+        $.decltype,
+        // alias($.dependent_type_identifier, $.dependent_name),
+      ))),
+      '::',
+    )),
+
     qualified_field_identifier: $ => prec.right(seq(
-      $._scope_resolution,
+      alias($._scope_resolution2, $._scope_resolution),
       field('name', choice(
         alias($.dependent_field_identifier, $.dependent_name),
         alias($.qualified_field_identifier, $.qualified_identifier),

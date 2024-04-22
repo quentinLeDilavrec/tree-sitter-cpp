@@ -2345,3 +2345,76 @@ inline constexpr MyEnum operator|(MyEnum bit0, MyEnum bit1) noexcept
         (argument_list
           (identifier))))
     (compound_statement)))
+
+
+================================================================================
+unknown30
+================================================================================
+
+
+template<>
+ScaleFactor ScalingFunction<KNPK>::apply() {
+}
+
+--------------------------------------------------------------------------------
+
+(translation_unit
+  (template_declaration
+    (template_parameter_list)
+    (function_definition
+      (type_identifier)
+      (function_declarator
+        (qualified_identifier
+          (template_type
+            (type_identifier)
+            (template_argument_list
+              (type_descriptor
+                (type_identifier))))
+          (identifier))
+        (parameter_list))
+      (compound_statement))))
+
+================================================================================
+unknown31
+================================================================================
+
+
+ScaleFactor ScalingFunction::apply() const {
+}
+
+--------------------------------------------------------------------------------
+
+(translation_unit
+  (function_definition
+    (type_identifier)
+    (function_declarator
+      (qualified_identifier
+        (namespace_identifier)
+        (identifier))
+      (parameter_list)
+      (type_qualifier))
+    (compound_statement)))
+
+================================================================================
+unknown32
+================================================================================
+
+template<>
+ScaleFactor ScalingFunction::apply() const {
+}
+
+--------------------------------------------------------------------------------
+
+(translation_unit
+  (template_declaration
+    (template_parameter_list)
+    (function_definition
+      (type_identifier)
+      (function_declarator
+        (qualified_identifier
+          (namespace_identifier)
+          (identifier))
+        (parameter_list)
+        (type_qualifier))
+      (compound_statement))))
+
