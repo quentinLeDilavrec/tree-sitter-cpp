@@ -102,6 +102,11 @@ module.exports = grammar(C, {
     [$._string, $.concatenated_string],
     [$.expression, $.concatenated_string],
     [$.template_type, $.template_method],
+    [$._preproc_expression, $.template_type],
+    [$._preproc_expression2, $._preproc_expression],
+    [$.preproc_else_in_preproc_expr, $.preproc_else_in_preproc_expr2],
+    [$.preproc_elifdef_in_preproc_expr, $.preproc_elifdef_in_preproc_expr2],
+    [$.preproc_elif_in_preproc_expr, $.preproc_elif_in_preproc_expr2],
   ],
 
   inline: ($, original) => original.concat([
@@ -243,6 +248,36 @@ module.exports = grammar(C, {
           e :
           field('body', choice(e.content, $.try_statement))),
     }),
+
+    _preproc_expression: ($, original) => choice(
+      original,
+      $.qualified_identifier,
+    ),
+
+    // preproc_call_declaration: $ => seq(
+    //   field('function', $.identifier),
+    //   field('arguments', $.preproc_argument_list2),
+    //   ';',
+    // ),
+
+    // preproc_argument_list2: $ => seq(
+    //   '(',
+    //   commaSep($._preproc_expression2),
+    //   ')',
+    // ),
+
+    // _preproc_expression2: $ => choice(
+    //   // $.identifier,
+    //   // alias($.preproc_call_expression, $.call_expression),
+    //   $.number_literal,
+    //   // $.string_literal,
+    //   // $.preproc_defined,
+    //   // // alias($.preproc_unary_expression, $.unary_expression),
+    //   // // alias($.preproc_binary_expression, $.binary_expression),
+    //   // // alias($.preproc_parenthesized_expression, $.parenthesized_expression),
+    //   // alias($.preproc_if_preproc_expr2, $.preproc_if),
+    //   // alias($.preproc_ifdef_preproc_expr2, $.preproc_ifdef),
+    // ),
 
     declaration: $ => seq(
       optional($.preproc_call_expression),
@@ -1423,6 +1458,93 @@ module.exports = grammar(C, {
     _namespace_identifier: $ => alias($.identifier, $.namespace_identifier),
   },
 });
+
+/**
+   *
+   * @param {string} suffix
+   *
+   * @param {RuleBuilder<string>} content
+   *
+   * @param {number} precedence
+   *
+   * @return {RuleBuilders<string, string>}
+   */
+function preprocIf(suffix, content, precedence = 0) {
+  /**
+    *
+    * @param {GrammarSymbols<string>} $
+    *
+    * @return {ChoiceRule}
+    *
+    */
+  function elseBlock($) {
+    return choice(
+      suffix ? alias($['preproc_else' + suffix], $.preproc_else) : $.preproc_else,
+      suffix ? alias($['preproc_elif' + suffix], $.preproc_elif) : $.preproc_elif,
+    );
+  }
+
+  /**
+    *
+    * @param {GrammarSymbols<string>} $
+    *
+    * @return {AliasRule | SymbolRule<string>}
+    *
+    */
+  function elifBlock($) {
+    return suffix ? alias($['preproc_elifdef' + suffix], $.preproc_elifdef) : $.preproc_elifdef;
+  }
+
+  return {
+    ['preproc_if' + suffix]: $ => prec(precedence, seq(
+      preprocessor('if'),
+      field('condition', $._preproc_expression),
+      '\n',
+      repeat(content($)),
+      field('alternative', optional(elseBlock($))),
+      preprocessor('endif'),
+    )),
+
+    ['preproc_ifdef' + suffix]: $ => prec(precedence, seq(
+      choice(preprocessor('ifdef'), preprocessor('ifndef')),
+      field('name', $.identifier),
+      repeat(content($)),
+      field('alternative', optional(choice(elseBlock($), elifBlock($)))),
+      preprocessor('endif'),
+    )),
+
+    ['preproc_else' + suffix]: $ => prec(precedence, seq(
+      preprocessor('else'),
+      repeat(content($)),
+    )),
+
+    ['preproc_elif' + suffix]: $ => prec(precedence, seq(
+      preprocessor('elif'),
+      field('condition', $._preproc_expression),
+      '\n',
+      repeat(content($)),
+      field('alternative', optional(elseBlock($))),
+    )),
+
+    ['preproc_elifdef' + suffix]: $ => prec(precedence, seq(
+      choice(preprocessor('elifdef'), preprocessor('elifndef')),
+      field('name', $.identifier),
+      repeat(content($)),
+      field('alternative', optional(elseBlock($))),
+    )),
+  };
+}
+
+/**
+  * Creates a preprocessor regex rule
+  *
+  * @param {RegExp|Rule|String} command
+  *
+  * @return {AliasRule}
+  */
+function preprocessor(command) {
+  return alias(new RegExp('#[ \t]*' + command), '#' + command);
+}
 
 /**
  * Creates a rule to optionally match one or more of the rules separated by a comma

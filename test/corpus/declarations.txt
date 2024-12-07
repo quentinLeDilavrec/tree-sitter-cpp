@@ -2601,7 +2601,7 @@ BASE_FEATURE(kEnablePixelCanvasRecording,
 
 
 ================================================================================
-fff
+preproc if weaving (good example of Tree-Sitter usefulness)
 ================================================================================
 
 BASE_FEATURE(kEGLDualGPURendering,
@@ -2612,3 +2612,21 @@ BASE_FEATURE(kEGLDualGPURendering,
 #endif
 
 --------------------------------------------------------------------------------
+
+(translation_unit
+  (preproc_call_declaration
+    (identifier)
+    (argument_list
+      (identifier)
+      (preproc_if
+        (call_expression
+          (identifier)
+          (argument_list
+            (identifier)))
+        (qualified_identifier
+          (namespace_identifier)
+          (identifier))
+        (preproc_else
+          (qualified_identifier
+            (namespace_identifier)
+            (identifier)))))))

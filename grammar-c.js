@@ -54,6 +54,7 @@ module.exports = grammar({
     [$.type_specifier, $._top_level_expression_statement],
     [$.type_qualifier, $.extension_expression],
     [$.preproc_if_in_preproc_expr, $.expression],
+    [$._preproc_expression2, $._preproc_expression],
   ],
 
   extras: $ => [
@@ -126,9 +127,35 @@ module.exports = grammar({
 
     preproc_call_declaration: $ => prec(PREC.CALL, seq(
       field('function', $.identifier),
-      field('arguments', alias($.preproc_argument_list, $.argument_list)),
-      ';',
+      field('arguments', alias($.preproc_argument_list2, $.argument_list)),
     )),
+
+    preproc_argument_list2: $ => seq('(', choice(
+      seq(')', ';'),
+      seq(
+        commaSep($._preproc_expression2),
+        choice(
+          seq(')', ';'),
+          seq(
+            ',',
+            alias($.preproc_if_in_preproc_expr2, $.preproc_if),
+          )
+        )
+      )
+    )),
+
+    _preproc_expression2: $ => choice(
+      $.identifier,
+      alias($.preproc_call_expression, $.call_expression),
+      $.number_literal,
+      $.char_literal,
+      $.string_literal,
+      $.preproc_defined,
+      alias($.preproc_unary_expression, $.unary_expression),
+      alias($.preproc_binary_expression, $.binary_expression),
+      alias($.preproc_parenthesized_expression, $.parenthesized_expression),
+      alias($.preproc_if_in_preproc_expr, $.preproc_if),
+    ),
 
     preproc_include: $ => seq(
       preprocessor('include'),
@@ -171,6 +198,7 @@ module.exports = grammar({
     ...preprocIf('_in_enumerator_list', $ => seq($.enumerator, ',')),
     ...preprocIf('_in_enumerator_list_no_comma', $ => $.enumerator, -1),
     ...preprocIf('_in_preproc_expr', $ => $._expression_not_binary, -1),
+    ...preprocIf('_in_preproc_expr2', $ => seq($._expression_not_binary, ')', ';'), -1),
 
     preproc_arg: _ => token(prec(-1, /\S([^/\n]|\/[^*]|\\\r?\n)*/)),
     preproc_directive: _ => /#[ \t]*[a-zA-Z0-9]\w*/,
@@ -180,12 +208,10 @@ module.exports = grammar({
       alias($.preproc_call_expression, $.call_expression),
       $.number_literal,
       $.char_literal,
-      $.string_literal,
       $.preproc_defined,
       alias($.preproc_unary_expression, $.unary_expression),
       alias($.preproc_binary_expression, $.binary_expression),
       alias($.preproc_parenthesized_expression, $.parenthesized_expression),
-      alias($.preproc_if_in_preproc_expr, $.preproc_if),
     ),
 
     preproc_parenthesized_expression: $ => seq(
