@@ -9,7 +9,8 @@
 /// <reference types="tree-sitter-cli/dsl" />
 // @ts-check
 
-const C = require('tree-sitter-c/grammar');
+// const C = require('tree-sitter-c/grammar');
+const C = require('./grammar-c.js');
 
 const PREC = Object.assign(C.PREC, {
   LAMBDA: 18,
@@ -94,6 +95,13 @@ module.exports = grammar(C, {
     [$.init_statement, $._for_statement_body],
     [$.field_expression, $.template_method, $.template_type],
     [$.qualified_field_identifier, $.template_method, $.template_type],
+    [$.preproc_if_in_preproc_expr, $.expression],
+    [$.preproc_else_in_preproc_expr, $.expression],
+    [$.preproc_if_in_preproc_expr, $.concatenated_string],
+    [$.preproc_else_in_preproc_expr, $.concatenated_string],
+    [$._string, $.concatenated_string],
+    [$.expression, $.concatenated_string],
+    [$.template_type, $.template_method],
   ],
 
   inline: ($, original) => original.concat([
@@ -107,7 +115,8 @@ module.exports = grammar(C, {
 
   rules: {
     _top_level_item: ($, original) => choice(
-      ...original.members.filter((member) => member.content?.name != '_old_style_function_definition'),
+      ...original.members.filter((member) => member.content?.name != '_old_style_function_definition'// && !(new String(member.name).startsWith('preproc_call'))
+    ).map((member) => (console.log(member), member)),
       $.namespace_definition,
       $.concept_definition,
       $.namespace_alias_definition,
@@ -122,7 +131,8 @@ module.exports = grammar(C, {
     ),
 
     _block_item: ($, original) => choice(
-      ...original.members.filter((member) => member.content?.name != '_old_style_function_definition'),
+      ...original.members.filter((member) => member.content?.name != '_old_style_function_definition'// && !(new String(member.name).startsWith('preproc_call'))
+      ),
       $.namespace_definition,
       $.concept_definition,
       $.namespace_alias_definition,
@@ -188,7 +198,7 @@ module.exports = grammar(C, {
     // with an associativity.
     _class_declaration: $ => seq(
       repeat(choice($.attribute_specifier, $.alignas_qualifier)),
-      optional($.ms_declspec_modifier),
+      optional(choice($.ms_declspec_modifier, $.preproc_call_expression)),
       repeat($.attribute_declaration),
       $._class_declaration_item,
     ),
@@ -235,6 +245,7 @@ module.exports = grammar(C, {
     }),
 
     declaration: $ => seq(
+      optional($.preproc_call_expression),
       $._declaration_specifiers,
       commaSep1(field('declarator', choice(
         seq(
