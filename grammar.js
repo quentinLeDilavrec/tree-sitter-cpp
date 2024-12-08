@@ -107,6 +107,14 @@ module.exports = grammar(C, {
     [$.preproc_else_in_preproc_expr, $.preproc_else_in_preproc_expr2],
     [$.preproc_elifdef_in_preproc_expr, $.preproc_elifdef_in_preproc_expr2],
     [$.preproc_elif_in_preproc_expr, $.preproc_elif_in_preproc_expr2],
+    // [$._declaration_modifiers, $.type_specifier],
+    // [$._declaration_modifiers, $.type_specifier, $.expression],
+    // [$._declaration_modifiers, $.type_specifier, $._declarator],
+    // [$._declaration_modifiers, $.sized_type_specifier],
+    // [$._declaration_modifiers, $._declarator, $.type_specifier, $.expression],
+    // [$._declaration_modifiers, $._declarator],
+    // [$._declaration_specifiers, $._declarator],
+    // [$._scope_resolution],
   ],
 
   inline: ($, original) => original.concat([
@@ -249,7 +257,7 @@ module.exports = grammar(C, {
           field('body', choice(e.content, $.try_statement))),
     }),
 
-    _preproc_expression: ($, original) => choice(
+    _preproc_expression2: ($, original) => choice(
       original,
       $.qualified_identifier,
     ),

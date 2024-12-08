@@ -2630,3 +2630,67 @@ BASE_FEATURE(kEGLDualGPURendering,
           (qualified_identifier
             (namespace_identifier)
             (identifier)))))))
+
+================================================================================
+MEDIA_EXPORT preproc macro in declaration
+================================================================================
+
+namespace switches {
+#if BUILDFLAG(IS_CHROMEOS)
+MEDIA_EXPORT extern const char kLacrosEnablePlatformHevc[] =
+    "lacros-enable-platform-hevc";
+#endif  // BUILDFLAG(IS_CHROMEOS)
+}  // namespace switches
+ 
+--------------------------------------------------------------------------------
+
+(translation_unit
+  (namespace_definition
+    (namespace_identifier)
+    (declaration_list
+      (preproc_if
+        (call_expression
+          (identifier)
+          (argument_list
+            (identifier)))
+        (declaration
+          (storage_class_specifier)
+          (type_qualifier)
+          (primitive_type)
+          (init_declarator
+            (array_declarator
+              (identifier))
+            (string_literal
+              (string_content)))))
+      (comment)))
+  (comment))
+
+
+================================================================================
+qualified_identifier in prepro_call_declaration parameters
+================================================================================
+
+namespace switches {
+
+BASE_FEATURE(kCastLoopbackAudioToAudioReceivers,
+             "CastLoopbackAudioToAudioReceivers",
+             base::FEATURE_ENABLED_BY_DEFAULT);
+
+}  // namespace media
+    
+--------------------------------------------------------------------------------
+
+(translation_unit
+  (namespace_definition
+    (namespace_identifier)
+    (declaration_list
+      (preproc_call_declaration
+        (identifier)
+        (argument_list
+          (identifier)
+          (string_literal
+            (string_content))
+          (qualified_identifier
+            (namespace_identifier)
+            (identifier))))))
+  (comment))

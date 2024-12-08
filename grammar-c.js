@@ -324,6 +324,7 @@ module.exports = grammar({
     ),
 
     _declaration_specifiers: $ => prec.right(seq(
+      optional("MEDIA_EXPORT"),
       repeat($._declaration_modifiers),
       field('type', $.type_specifier),
       repeat($._declaration_modifiers),

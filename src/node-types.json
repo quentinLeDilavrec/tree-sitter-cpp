@@ -4842,10 +4842,6 @@
             "named": true
           },
           {
-            "type": "qualified_identifier",
-            "named": true
-          },
-          {
             "type": "unary_expression",
             "named": true
           }
@@ -5742,10 +5738,6 @@
           },
           {
             "type": "preproc_defined",
-            "named": true
-          },
-          {
-            "type": "qualified_identifier",
             "named": true
           },
           {
@@ -8068,6 +8060,10 @@
   },
   {
     "type": "LR\"",
+    "named": false
+  },
+  {
+    "type": "MEDIA_EXPORT",
     "named": false
   },
   {
